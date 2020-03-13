@@ -4,15 +4,31 @@
 #include "list.h"
 
 typedef struct ini {
-	char *filepath[64];
+	char filepath[64];
 	f_Node_t *Ahead;
 }ini_t;
 
 static ini_t lini;
 
 static f_Node_t *AHead = NULL;
+
+void RemoveUnChara( char *src ,char *dst) {
+	int i = 0;
+	int len = strlen(src);
+	for( i = 0; i < len; i++ ) {
+		if( src[i] == ' ' || src[i] == '\n' ) {
+			continue;
+		} else {
+			*dst = src[i];
+			dst++;
+		}
+	}
+	*dst = 0;
+}
+
+
 void Init_lini( const char *file ) {
-	memcpy(lini.filepath,file,64);
+	strcpy(lini.filepath,file);
 	lini.Ahead = NULL;
 }
 
@@ -85,6 +101,7 @@ void InsertList( char *value ) {
 	if( value[0] == '[' && value[len-1] == ']' ) {
 		ftmp = (f_Node_t *)malloc(sizeof(f_Node_t));
 		ftmp->fv = strdup(value);
+		ftmp->in = 0;
 		ftmp->shead = NULL;
 		ftmp->f_next = NULL;
 		InsertF_list(ftmp);
@@ -92,15 +109,11 @@ void InsertList( char *value ) {
 	} else {
 		stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
 		stmp->s_next = NULL;
+		stmp->in = 0;
 		PareseKeyAndValue(stmp,value);
 		InsertS_list(last.fv,stmp);
 	}
 }
-
-void CommitFile( void ) {
-
-}
-
 void ListFree( void ) {
 	if( lini.Ahead != NULL ) {
 		f_Node_t *tmp = lini.Ahead;
@@ -125,3 +138,65 @@ void ListFree( void ) {
 		lini.Ahead = NULL;
 	}
 }
+
+void CommitFile( void ) {
+	FILE *fp1 = NULL;
+	FILE *fp2 = NULL;
+	char filepathtmp[64] = {0};
+	char buf[256] = {0};
+	char dst[256] = {0};
+	int len = 0;
+	
+	s_Node_t *sstmp = NULL;
+	
+	sprintf(filepathtmp,"%s.tmp",lini.filepath);
+	fp1 = fopen(lini.filepath,"r");
+	fp2 = fopen(filepathtmp,"w");
+	if( fp1 && fp2 ) {
+		while( fgets(buf,256,fp1) != NULL ) {
+			RemoveUnChara(buf,dst);
+			len = strlen(dst);
+			if( dst[0] == ';' || dst[0] == '#' ) {
+				fprintf(fp2,"%s",buf);
+			} else {
+				if( dst[0] == '[' && dst[len-1] == ']' ) {
+					f_Node_t * tmp = lini.Ahead;
+					for(;tmp != NULL; tmp = tmp->f_next ) {
+						if( strcmp(tmp->fv,dst) == 0 ) {
+							fprintf(fp2,"%s",buf);
+							sstmp = tmp->shead;
+							break;
+						}
+					}
+				} else {
+					int change = 0;
+					s_Node_t *stmp = sstmp;
+					for(;stmp != NULL; stmp = stmp->s_next ){
+						if( stmp->in == 1 && strncmp(stmp->sk,dst,strlen(stmp->sk)) == 0 ) {
+							fprintf(fp2,"%s = %s\n",stmp->sk,stmp->sv);	
+							change = 1;
+							break;
+						}
+					}
+					if( change == 0 )
+						fprintf(fp2,"%s",buf);
+				}
+			}
+		}
+		f_Node_t * tmp = lini.Ahead;
+		for(;tmp != NULL; tmp = tmp->f_next ) {
+			if(tmp->in == 1 ) {
+				fprintf(fp2,"%s\n",tmp->fv);
+				s_Node_t *stmp = tmp->shead;
+				for(;stmp != NULL; stmp = stmp->s_next ){
+					fprintf(fp2,"%s = %s\n",stmp->sk,stmp->sv);
+				}
+			}
+		}
+		ListFree();
+		fclose(fp1);
+		fclose(fp2);
+	}
+}
+
+
