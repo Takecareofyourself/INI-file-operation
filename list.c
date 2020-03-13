@@ -57,7 +57,7 @@ void PareseKeyAndValue(s_Node_t *stmp,char *value) {
 		p = strtok(NULL,"=");
 		if( p ) {
 			stmp->sv = strdup(p);
-		}
+		} 
 	}
 }
 
@@ -108,6 +108,8 @@ void InsertList( char *value ) {
 		last = *ftmp;
 	} else {
 		stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
+		stmp->sk = NULL;
+		stmp->sv = NULL;
 		stmp->s_next = NULL;
 		stmp->in = 0;
 		PareseKeyAndValue(stmp,value);

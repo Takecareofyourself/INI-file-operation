@@ -14,10 +14,10 @@ int Init_iniFile( const char *filepath ) {
 	if( fp ) {
 		Init_lini(filepath);
 		while( fgets(lbuf,BUF_MAX,fp) != NULL ) {
-			if( lbuf[0] == '#' || lbuf[0] == ';' ) {
+			RemoveUnChara(lbuf,dst);
+			if( dst[0] == '#' || dst[0] == ';' ) {
 				continue;
 			} else {
-				RemoveUnChara(lbuf,dst);
 				InsertList( dst );
 			}
 		}
