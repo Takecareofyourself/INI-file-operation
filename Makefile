@@ -16,7 +16,7 @@ CXXFLAGS = ${CFLAGS} ${INC} ${LIBS}
 EXEC = a.out
  
 #指定由哪些文件来生成可执行文件
-OBJS = iniapi.o list.o
+OBJS = iniapi.o list.o test.o
  
 #make执行动作
 ${EXEC} : ${OBJS}

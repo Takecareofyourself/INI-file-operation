@@ -196,6 +196,7 @@ void CommitFile( void ) {
 		ListFree();
 		fclose(fp1);
 		fclose(fp2);
+		rename(filepathtmp,lini.filepath);
 	}
 }
 
