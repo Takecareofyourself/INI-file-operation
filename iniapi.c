@@ -15,7 +15,7 @@ int Init_iniFile( const char *filepath ) {
 		Init_lini(filepath);
 		while( fgets(lbuf,BUF_MAX,fp) != NULL ) {
 			RemoveUnChara(lbuf,dst);
-			if( dst[0] == '#' || dst[0] == ';' ) {
+			if( dst[0] == '#' || dst[0] == ';' || dst[0] == 0 ) {
 				continue;
 			} else {
 				InsertList( dst );
