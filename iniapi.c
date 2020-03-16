@@ -55,8 +55,9 @@ char *GetValue(const char *setion, const char *option ) {
 	free(secbuf);
 	return p;
 }
-void SetValue(const char *setion, const char *option, const char *value ) {
+void SetValue(const char *setion, const char *option, const char *val ) {
 	int secflag = 0;
+	int optflag = 0;
 	int len = strlen(setion);
 	char *secbuf = malloc(len+3);
 	memset(secbuf,0,len+3);
@@ -67,17 +68,27 @@ void SetValue(const char *setion, const char *option, const char *value ) {
 	} else {
 		for( ;tmp != NULL;tmp = tmp->f_next ) {
 			if( strcmp(secbuf,tmp->fv) == 0 ) {
+				optflag = 0;
 				secflag = 1;
 				if( tmp->shead != NULL ) {
 					s_Node_t *stmp = tmp->shead;
 					for(; stmp!=NULL; stmp = stmp->s_next ) {
 						if( strcmp(option,stmp->sk) == 0 ) {
 							if(stmp->sv) free(stmp->sv);
-							stmp->sv = strdup(value);
+							stmp->sv = strdup(val);
 							stmp->in = 1;
+							optflag = 1;
 							//strcpy(stmp->sv,value);
 							break;
 						}
+					}
+					if( optflag == 0 ) {
+						s_Node_t *stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
+						stmp->sk = strdup(option);
+						stmp->sv = strdup(val);
+						stmp->in = 2;
+						stmp->s_next = NULL;
+						InsertS_list(tmp->fv,stmp);
 					}
 				}
 			}
@@ -94,7 +105,7 @@ void SetValue(const char *setion, const char *option, const char *value ) {
 	
 		s_Node_t *stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
 		stmp->sk = strdup(option);
-		stmp->sv = strdup(value);
+		stmp->sv = strdup(val);
 		stmp->in = 1;
 		stmp->s_next = NULL;
 		InsertS_list(ftmp->fv,stmp);

@@ -150,6 +150,8 @@ void CommitFile( void ) {
 	int len = 0;
 	
 	s_Node_t *sstmp = NULL;
+	f_Node_t * tmp = NULL;
+	s_Node_t *stmp = NULL;
 	
 	sprintf(filepathtmp,"%s.tmp",lini.filepath);
 	fp1 = fopen(lini.filepath,"r");
@@ -161,9 +163,8 @@ void CommitFile( void ) {
 			if( dst[0] == ';' || dst[0] == '#' ) {
 				fprintf(fp2,"%s",buf);
 			} else {
-				if( dst[0] == '[' && dst[len-1] == ']' ) {
-					f_Node_t * tmp = lini.Ahead;
-					for(;tmp != NULL; tmp = tmp->f_next ) {
+				if( dst[0] == '[' && dst[len-1] == ']' ) {	
+					for(tmp = lini.Ahead; tmp != NULL; tmp = tmp->f_next ) {
 						if( strcmp(tmp->fv,dst) == 0 ) {
 							fprintf(fp2,"%s",buf);
 							sstmp = tmp->shead;
@@ -172,11 +173,14 @@ void CommitFile( void ) {
 					}
 				} else {
 					int change = 0;
-					s_Node_t *stmp = sstmp;
-					for(;stmp != NULL; stmp = stmp->s_next ){
+					for( stmp = sstmp; stmp != NULL; stmp = stmp->s_next ){
 						if( stmp->in == 1 && strncmp(stmp->sk,dst,strlen(stmp->sk)) == 0 ) {
 							fprintf(fp2,"%s = %s\n",stmp->sk,stmp->sv);	
 							change = 1;
+							break;
+						} else if( stmp->in == 2 ) {
+							fprintf(fp2,"%s = %s\n",stmp->sk,stmp->sv);	
+							stmp->in = 0;
 							break;
 						}
 					}
@@ -185,12 +189,11 @@ void CommitFile( void ) {
 				}
 			}
 		}
-		f_Node_t * tmp = lini.Ahead;
-		for(;tmp != NULL; tmp = tmp->f_next ) {
-			if(tmp->in == 1 ) {
+		
+		for (tmp = lini.Ahead; tmp != NULL; tmp = tmp->f_next ) {
+			if( tmp->in == 1 ) {
 				fprintf(fp2,"%s\n",tmp->fv);
-				s_Node_t *stmp = tmp->shead;
-				for(;stmp != NULL; stmp = stmp->s_next ){
+				for(stmp = tmp->shead; stmp != NULL; stmp = stmp->s_next ){
 					fprintf(fp2,"%s = %s\n",stmp->sk,stmp->sv);
 				}
 			}

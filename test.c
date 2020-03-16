@@ -6,7 +6,7 @@ int main(void){
 	char *p = GetValue("tmp1","t2");
 	//printf("get = %s\n",p);
 	SetValue("tmp1","t2","990808");
-	
+	SetValue("tmp1","t3","11355");
 	p = GetValue("tmp1","t2");
 	//printf("get = %s\n",p);
 	SetValue("tmp3","t1","fsfsgas");

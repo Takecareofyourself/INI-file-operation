@@ -14,14 +14,15 @@ CXXFLAGS = ${CFLAGS} ${INC} ${LIBS}
  
 #指定生成可执行文件名称
 EXEC = a.out
+LIBSO = libini.so
  
 #指定由哪些文件来生成可执行文件
 OBJS = iniapi.o list.o test.o
- 
+#gcc iniapi.c list.c -fPIC -shared -o libini.so
 #make执行动作
 ${EXEC} : ${OBJS}
 	${CC} -o $@ $^ -g
- 
+	${CC} -fPIC -shared -o ${LIBSO} $^ 
  
 #make clean动作
 clean:
