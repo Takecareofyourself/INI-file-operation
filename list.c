@@ -123,11 +123,11 @@ void ListFree( void ) {
 			printf("Ahead is nil\n");
 		} else {
 			for( ;tmp != NULL;tmp = tmp->f_next ) {
-				printf("%s\n",tmp->fv);
+				printf("free(%s)\n",tmp->fv);
 				if( tmp->shead != NULL ) {
 					s_Node_t *stmp = tmp->shead;
 					for(; stmp!=NULL; stmp = stmp->s_next ) {
-						printf("%s = %s\n",stmp->sk,stmp->sv);
+						printf("free( %s = %s )\n",stmp->sk,stmp->sv);
 						free(stmp->sk);
 						free(stmp->sv);
 						free(stmp);
