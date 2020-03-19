@@ -5,6 +5,7 @@
 
 #define BUF_MAX 512
 
+
 int Init_iniFile( const char *filepath ) {
 	char lbuf[BUF_MAX] = {0};
 	char dst[BUF_MAX] = {0};
@@ -76,7 +77,7 @@ void SetValue(const char *setion, const char *option, const char *val ) {
 						if( strcmp(option,stmp->sk) == 0 ) {
 							if(stmp->sv) free(stmp->sv);
 							stmp->sv = strdup(val);
-							stmp->in = 1;
+							stmp->in = _SET;
 							optflag = 1;
 							//strcpy(stmp->sv,value);
 							break;
@@ -86,15 +87,16 @@ void SetValue(const char *setion, const char *option, const char *val ) {
 						stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
 						stmp->sk = strdup(option);
 						stmp->sv = strdup(val);
-						stmp->in = 2;
+						stmp->in = _NEW;
 						stmp->s_next = NULL;
+						printf(" %s # %s # %s #\n",tmp->fv,option,val);
 						InsertS_list(tmp->fv,stmp);
 					}
 				} else {
 					stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
 					stmp->sk = strdup(option);
 					stmp->sv = strdup(val);
-					stmp->in = 2;
+					stmp->in = _NEW;
 					stmp->s_next = NULL;
 					InsertS_list(secbuf,stmp);
 				}
@@ -105,7 +107,7 @@ void SetValue(const char *setion, const char *option, const char *val ) {
 	if( secflag == 0 ) {
 		f_Node_t *ftmp = (f_Node_t *)malloc(sizeof(f_Node_t));
 		ftmp->fv = strdup(secbuf);
-		ftmp->in = 1;
+		ftmp->in = _SET;
 		ftmp->shead = NULL;
 		ftmp->f_next = NULL;
 		InsertF_list(ftmp);
@@ -113,7 +115,7 @@ void SetValue(const char *setion, const char *option, const char *val ) {
 		s_Node_t *stmp = (s_Node_t *)malloc(sizeof(s_Node_t));
 		stmp->sk = strdup(option);
 		stmp->sv = strdup(val);
-		stmp->in = 1;
+		stmp->in = _SET;
 		stmp->s_next = NULL;
 		InsertS_list(ftmp->fv,stmp);
 	}

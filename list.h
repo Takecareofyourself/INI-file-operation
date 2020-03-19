@@ -15,7 +15,8 @@ typedef struct f_Node {
 	struct f_Node *f_next;
 }f_Node_t;
 
-
+#define _SET 1
+#define _NEW 2
 
 f_Node_t * GetHead( void );
 void InsertS_list( const char *fv, s_Node_t *snode );
